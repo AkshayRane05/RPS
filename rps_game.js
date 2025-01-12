@@ -1,72 +1,78 @@
-const choices = ['rock', 'paper', 'scissors'];
+let humanScore = 0;
+let computerScore = 0;
+
+const resultDiv = document.getElementById('result');
+
+document.getElementById('rock').addEventListener('click', () => playRound('rock'));
+document.getElementById('paper').addEventListener('click', () => playRound('paper'));
+document.getElementById('scissors').addEventListener('click', () => playRound('scissors'));
+
+function playRound(humanChoice) {
+    const choices = ['rock', 'paper', 'scissors'];
+    const computerChoice = getComputerChoice(choices);
+    let result = determineWinner(humanChoice, computerChoice);
+
+    if (result === 1) {
+        humanScore++;
+    } else if (result === -1) {
+        computerScore++;
+    }
+
+    updateResult(humanChoice, computerChoice, result);
+    checkWinner();
+}
 
 function getComputerChoice(choices) {
-    const rI = Math.floor(Math.random() * 3);
-
-    return choices[rI];
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
 }
 
-function getHumanChoice() {
-    let choice = prompt("Enter your choice:");
-    if (choice === null) return "Invalid Input!";
-
-    choice = choice.toLowerCase();
-
-    if (choice === 'rock' || choice === 'r') {
-        return choices[0];
-    } else if (choice === 'paper' || choice === 'p') {
-        return choices[1];
-    } else if (choice === 'scissors' || choice === 's') {
-        return choices[2];
-    } else {
-        return "Invalid Input!";
-    }
-}
-
-function playRound(humanChoice, computerChoice) {
-    if (
+function determineWinner(humanChoice, computerChoice) {
+    if (humanChoice === computerChoice) {
+        return 0;
+    } else if (
         (humanChoice === 'rock' && computerChoice === 'scissors') ||
         (humanChoice === 'paper' && computerChoice === 'rock') ||
         (humanChoice === 'scissors' && computerChoice === 'paper')
     ) {
-        console.log(`You win! ${humanChoice.charAt(0).toUpperCase() + humanChoice.slice(1)} beats ${computerChoice}.`);
-        return 1;  // Human wins
+        return 1;
     } else {
-        console.log(`You lose! ${computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1)} beats ${humanChoice}.`);
-        return -1;  // Computer wins
+        return -1;
     }
 }
 
-function playGame() {
+function updateResult(humanChoice, computerChoice, result) {
+    // Make the result div visible when the game starts
+    resultDiv.style.display = "block";
 
-    let humanScore = 0;
-    let computerScore = 0;
-
-    for (let i = 0; i < 5; i++) {
-        let humanChoice = getHumanChoice();
-        if (humanChoice === "Invalid Input!") {
-            console.log("Invalid input, please enter valid input.");
-            i--;  // Decrement i to retry the round
-            continue;  // Skip the rest of the loop and ask for input again
-        }
-
-        const computerChoice = getComputerChoice(choices);
-        let result = playRound(humanChoice, computerChoice);
-
-        if (result === 1) {
-            humanScore++;
-        } else if (result === -1) {
-            computerScore++;
-        }
-    }
-
-    console.log(`Final Score - You: ${humanScore}, Computer: ${computerScore}`);
-
-    if (humanScore > computerScore) {
-        console.log("Congratulations, You win the game...");
-    } else if (computerScore > humanScore) {
-        console.log("You lose, Better luck next time...");
+    let resultText = `You chose ${humanChoice}, computer chose ${computerChoice}. `;
+    if (result === 1) {
+        resultText += "You win this round!";
+    } else if (result === -1) {
+        resultText += "You lose this round!";
     } else {
-        console.log("Unfortunately, it's a tie game...");
+        resultText += "It's a tie!";
     }
+    resultText += ` Score - You: ${humanScore}, Computer: ${computerScore}`;
+    resultDiv.textContent = resultText;
+}
+
+function checkWinner() {
+    if (humanScore === 5) {
+        resultDiv.textContent += " Congratulations, You win the game!";
+        resetGame();
+    } else if (computerScore === 5) {
+        resultDiv.textContent += " You lose, Better luck next time!";
+        resetGame();
+    }
+}
+
+function resetGame() {
+    humanScore = 0;
+    computerScore = 0;
+    resultDiv.textContent += " Starting a new game...";
+    setTimeout(() => {
+        resultDiv.style.display = "none"; // Hide the result box for the new game
+        resultDiv.textContent = ""; // Clear the result text
+    }, 3000);
 }

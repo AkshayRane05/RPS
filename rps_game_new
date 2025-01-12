@@ -1,0 +1,58 @@
+const choices = ["rock", "paper", "scissors"];
+let humanScore = 0;
+let computerScore = 0;
+
+function getComputerChoice(choices) {
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
+}
+
+function playRound(humanChoice, computerChoice) {
+    if (humanChoice === computerChoice) {
+        return 0;
+    } else if (
+        (humanChoice === "rock" && computerChoice === "scissors") ||
+        (humanChoice === "scissors" && computerChoice === "paper") ||
+        (humanChoice === "paper" && computerChoice === "rock")
+    ) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+function updateScore(result) {
+    if (result === 1) {
+        humanScore++;
+    } else if (result === -1) {
+        computerScore++;
+    }
+
+    console.log(`Current Score - You: ${humanScore}, Computer: ${computerScore}`);
+
+    if (humanScore > computerScore) {
+        console.log("Congratulations, You are currently winning...");
+    } else if (computerScore > humanScore) {
+        console.log("You are currently losing, Better luck next round...");
+    } else {
+        console.log("It's a tie!");
+    }
+}
+
+document.getElementById("rock").addEventListener("click", () => {
+    const computerChoice = getComputerChoice(choices);
+    const result = playRound("rock", computerChoice);
+    updateScore(result);
+});
+
+document.getElementById("paper").addEventListener("click", () => {
+    const computerChoice = getComputerChoice(choices);
+    const result = playRound("paper", computerChoice);
+    updateScore(result);
+});
+
+document.getElementById("scissors").addEventListener("click", () => {
+    const computerChoice = getComputerChoice(choices);
+    const result = playRound("scissors", computerChoice);
+    updateScore(result);
+});
